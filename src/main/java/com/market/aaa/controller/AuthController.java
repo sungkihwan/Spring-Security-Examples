@@ -4,7 +4,7 @@ import com.market.aaa.payload.request.SignupRequest;
 import com.market.aaa.payload.request.LoginRequest;
 import com.market.aaa.payload.request.TokenRefreshRequest;
 import com.market.aaa.payload.response.TokenResponse;
-import com.market.aaa.entity.Members;
+import com.market.aaa.entity.User;
 import com.market.aaa.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,13 +22,13 @@ public class AuthController {
 
     @PostMapping("/signin")
     public TokenResponse signin(@Valid @RequestBody LoginRequest loginRequest) {
-        String memberId = loginRequest.getMemberId();
+        String userId = loginRequest.getUserId();
         String password = loginRequest.getPassword();
-        return authService.signin(memberId, password);
+        return authService.signin(userId, password);
     }
 
     @PostMapping("/signup")
-    public Members signup(@Valid @RequestBody SignupRequest signupRequest) {
+    public User signup(@Valid @RequestBody SignupRequest signupRequest) {
         return authService.signup(signupRequest);
     }
 

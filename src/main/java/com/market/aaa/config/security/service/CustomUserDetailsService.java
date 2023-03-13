@@ -1,7 +1,7 @@
 package com.market.aaa.config.security.service;
 
-import com.market.aaa.entity.Members;
-import com.market.aaa.repository.MembersRepository;
+import com.market.aaa.entity.User;
+import com.market.aaa.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,23 +11,23 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final MembersRepository membersRepository;
+    private final UserRepository userRepository;
 
     @Override
     public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return membersRepository.findByMemberId(username)
+        return userRepository.findByUserId(username)
                 .map(this::createUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
     }
 
     // 해당하는 User 의 데이터가 존재한다면 CustomUserDetails 객체로 만들어서 리턴
-    private CustomUserDetails createUserDetails(Members member) {
+    private CustomUserDetails createUserDetails(User user) {
         return CustomUser.builder()
-                .memberId(member.getMemberId())
-                .password(member.getPassword())
-                .company(member.getCompany())
-                .roles(member.getRoles())
-                .loginFailCount(member.getLoginFailCount())
+                .userId(user.getUserId())
+                .password(user.getPassword())
+                .company(user.getCompany())
+                .roles(user.getRoles())
+                .loginFailCount(user.getLoginFailCount())
                 .build();
     }
 }

@@ -12,15 +12,15 @@ import java.util.stream.Collectors;
 @Builder
 @Data
 public class CustomUser implements CustomUserDetails {
-    private String memberId;
+    private String userId;
     private String password;
     private List<String> roles;
     private String company;
 
     private int loginFailCount;
 
-    public CustomUser(String memberId, String password, List<String> roles, String company, int loginFailCount) {
-        this.memberId = memberId;
+    public CustomUser(String userId, String password, List<String> roles, String company, int loginFailCount) {
+        this.userId = userId;
         this.password = password;
         this.roles = roles;
         this.company = company;
@@ -48,7 +48,7 @@ public class CustomUser implements CustomUserDetails {
 
     @Override
     public String getUsername() {
-        return memberId;
+        return userId;
     }
 
     @Override

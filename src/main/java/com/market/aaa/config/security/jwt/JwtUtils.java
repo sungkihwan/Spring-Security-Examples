@@ -2,7 +2,7 @@ package com.market.aaa.config.security.jwt;
 
 import com.market.aaa.config.security.service.CustomUser;
 import com.market.aaa.config.security.service.CustomUserDetails;
-import com.market.aaa.entity.Members;
+import com.market.aaa.entity.User;
 import com.market.aaa.payload.response.TokenResponse;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -13,8 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Base64Utils;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.time.Duration;
 import java.time.Instant;
@@ -32,7 +33,11 @@ public class JwtUtils {
     public JwtUtils(@Value("${jwt.secret}") String secretKey) {
         log.warn("secretKey = {}", secretKey);
 //        byte[] keyBytes = Base64Utils.decodeFromUrlSafeString(String.valueOf(secretKey));
-        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+//        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+        byte[] keyBytes = secretKey.getBytes();
+        SecretKey secretKeyObj = new SecretKeySpec(keyBytes, "HmacSHA512");
+        this.key = Keys.hmacShaKeyFor(secretKeyObj.getEncoded());
+        log.warn("key = {}", key);
     }
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
@@ -99,8 +104,8 @@ public class JwtUtils {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    public TokenResponse refreshToken(Members members){
-        String authorities = String.join(",", members.getRoles());
+    public TokenResponse refreshToken(User user){
+        String authorities = String.join(",", user.getRoles());
 
         Instant now = Instant.now();
         Date issuedAt = Date.from(now);
@@ -109,9 +114,9 @@ public class JwtUtils {
 
         // Access Token 생성
         String accessToken = Jwts.builder()
-                .setSubject(members.getMemberId())
+                .setSubject(user.getUserId())
                 .claim(JWT_CLAIMS_ROLE, authorities)
-                .claim(JWT_CLAIMS_COMPANY, members.getCompany())
+                .claim(JWT_CLAIMS_COMPANY, user.getCompany())
                 .setIssuedAt(issuedAt)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)

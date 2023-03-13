@@ -1,15 +1,12 @@
 package com.market.aaa.config.security.service;
 
-import com.market.aaa.repository.MembersRepository;
+import com.market.aaa.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +18,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private final CustomUserDetailsService userDetailsService;
 
-    private final MembersRepository membersRepository;
+    private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -38,7 +35,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
 
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-            membersRepository.updateLoginFailCount(username);
+            userRepository.updateLoginFailCount(username);
             throw new BadCredentialsException("Invalid username or password");
         }
 

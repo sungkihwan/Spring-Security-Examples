@@ -18,7 +18,7 @@ import java.util.Map;
 @Log4j2
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
-    final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)

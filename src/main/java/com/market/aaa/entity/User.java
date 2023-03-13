@@ -2,16 +2,10 @@ package com.market.aaa.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 
 @Builder
@@ -20,27 +14,28 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Entity
 @Table(indexes = @Index(columnList = "refreshToken", name = "refresh_token_index"))
-public class Members {
+public class User {
 
     @Id
-    @Column(updatable = false, unique = true, nullable = false)
-    private String memberId;
+    @Column(updatable = false, unique = true, nullable = false, length = 40)
+    private String userId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     @JsonIgnore
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
+    @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
     private List<String> roles = new ArrayList<>();
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 40)
     private String company;
 
     @Column(unique = true)
     private String refreshToken;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1)
     private int loginFailCount;
 
 }
